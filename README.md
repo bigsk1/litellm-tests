@@ -33,11 +33,11 @@ This document provides instructions for setting up and running the LiteLLM test 
 
 4. **Create a `.env` file**
    
-   Create a file named `.env` in your project directory and add your API keys:
+   Create a file named `.env` in your project directory and add your API keys, add keys and model providers as needed:
    ```
    OPENAI_API_KEY=your_openai_api_key
    ANTHROPIC_API_KEY=your_anthropic_api_key
-   GOOGLE_API_KEY=your_google_api_key
+   # GOOGLE_API_KEY=your_google_api_key
    ```
 
 5. **Create a directory for test files**
