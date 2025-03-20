@@ -1,4 +1,5 @@
 import os
+import time
 import litellm
 from dotenv import load_dotenv
 
@@ -8,31 +9,40 @@ load_dotenv()
 # Set API keys
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
 os.environ["ANTHROPIC_API_KEY"] = os.getenv("ANTHROPIC_API_KEY")
-os.environ["GOOGLE_API_KEY"] = os.getenv("GOOGLE_API_KEY")
 
 # Define models to test
 models = [
-    "gpt-4o-mini",
-    "gemini-1.5-flash", 
-    "claude-3-5-sonnet"
+    "gpt-4o-mini", 
+    "claude-3-5-sonnet-latest"
 ]
 
-# Simple test question
-message = "What is the capital of France? One word answer."
-
-# Test each model
-for model in models:
-    print(f"\n\n----- Testing {model} -----")
+# Function to test basic completion
+def test_basic_completion(model):
+    """Test basic completion for a given model"""
+    print(f"\n=== Testing Basic Completion for {model} ===")
+    
     try:
+        # Measure time manually
+        start_time = time.time()
+        
         response = litellm.completion(
             model=model,
-            messages=[{"role": "user", "content": message}]
+            messages=[{
+                "role": "user",
+                "content": "What is the capital of France? Answer in one word."
+            }]
         )
         
-        # Extract and print response
-        response_message = response.choices[0].message.content
-        print(f"Response from {model}: {response_message}")
-        print(f"Response time: {response.response_ms/1000:.2f} seconds")
+        end_time = time.time()
+        
+        print(f"Response: {response.choices[0].message.content}")
+        print(f"Time taken: {end_time - start_time:.2f} seconds")
+        print("Test passed successfully!")
         
     except Exception as e:
-        print(f"Error with {model}: {e}")
+        print(f"Error testing {model}: {str(e)}")
+
+# Run test for each model
+if __name__ == "__main__":
+    for model in models:
+        test_basic_completion(model)

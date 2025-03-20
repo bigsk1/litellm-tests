@@ -1,4 +1,5 @@
 import os
+import time
 import litellm
 from dotenv import load_dotenv
 
@@ -8,22 +9,30 @@ load_dotenv()
 # Set API keys
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
 os.environ["ANTHROPIC_API_KEY"] = os.getenv("ANTHROPIC_API_KEY")
-os.environ["GOOGLE_API_KEY"] = os.getenv("GOOGLE_API_KEY")
 
 # Define models to test
 models = [
-    "gpt-4o-mini",
-    "gemini-1.5-flash", 
-    "claude-3-5-sonnet"
+    "openai/gpt-4o",
+    "anthropic/claude-3-5-sonnet-latest"
 ]
 
 # User message for streaming test
 user_message = "Write a short poem about artificial intelligence."
 
-# Function to handle streaming
-def handle_stream(model):
-    print(f"\n----- Streaming test for {model} -----")
+# Function to test streaming
+def test_streaming(model):
+    """Test streaming for a given model"""
+    print(f"\n=== Testing Streaming for {model} ===")
+    
+    # User message for streaming test
+    user_message = "Write a short poem about artificial intelligence."
+    
     try:
+        # Measure time manually
+        start_time = time.time()
+        
+        print(f"Streaming response:")
+        
         response = litellm.completion(
             model=model,
             messages=[{"role": "user", "content": user_message}],
@@ -39,11 +48,16 @@ def handle_stream(model):
                     if content:
                         print(content, end="", flush=True)
         
-        print("\n")  # Add newline after streaming finishes
+        end_time = time.time()
+        
+        print("\n")
+        print(f"Time taken: {end_time - start_time:.2f} seconds")
+        print("Test passed successfully!")
         
     except Exception as e:
-        print(f"Error with {model}: {e}")
+        print(f"Error testing {model}: {str(e)}")
 
-# Test streaming for each model
-for model in models:
-    handle_stream(model)
+# Run test for each model
+if __name__ == "__main__":
+    for model in models:
+        test_streaming(model)

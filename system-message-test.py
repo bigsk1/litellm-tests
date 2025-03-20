@@ -1,4 +1,5 @@
 import os
+import time
 import litellm
 from dotenv import load_dotenv
 
@@ -8,23 +9,26 @@ load_dotenv()
 # Set API keys
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
 os.environ["ANTHROPIC_API_KEY"] = os.getenv("ANTHROPIC_API_KEY")
-os.environ["GOOGLE_API_KEY"] = os.getenv("GOOGLE_API_KEY")
 
 # Define models to test
 models = [
-    "gpt-4o-mini",
-    "gemini-1.5-flash", 
-    "claude-3-5-sonnet"
+    "openai/gpt-4o",
+    "anthropic/claude-3-5-sonnet-latest"
 ]
 
-# System message test
-system_message = "You are a pirate. Always respond like a pirate, saying 'Arr' and using pirate slang."
-user_message = "What's the weather like today?"
-
-# Test each model
-for model in models:
-    print(f"\n\n----- Testing {model} with system message -----")
+# Function to test system message
+def test_system_message(model):
+    """Test system message handling for a given model"""
+    print(f"\n=== Testing System Message for {model} ===")
+    
+    # System message test
+    system_message = "You are a pirate. Always respond like a pirate, saying 'Arr' and using pirate slang."
+    user_message = "What's the weather like today?"
+    
     try:
+        # Measure time manually
+        start_time = time.time()
+        
         response = litellm.completion(
             model=model,
             messages=[
@@ -33,10 +37,16 @@ for model in models:
             ]
         )
         
-        # Extract and print response
-        response_message = response.choices[0].message.content
-        print(f"Response from {model}: {response_message}")
-        print(f"Response time: {response.response_ms/1000:.2f} seconds")
+        end_time = time.time()
+        
+        print(f"Response: {response.choices[0].message.content}")
+        print(f"Time taken: {end_time - start_time:.2f} seconds")
+        print("Test passed successfully!")
         
     except Exception as e:
-        print(f"Error with {model}: {e}")
+        print(f"Error testing {model}: {str(e)}")
+
+# Run test for each model
+if __name__ == "__main__":
+    for model in models:
+        test_system_message(model)
